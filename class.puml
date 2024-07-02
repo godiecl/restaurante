@@ -1,0 +1,86 @@
+@startuml
+skin rose
+set separator none
+left to right direction
+hide empty members
+
+package cl.ucn.disc.poo.restaurante {
+
+    package model {
+
+        abstract class Producto <<abstract>> {
+            - nombre: String
+            - precio: int
+            + Producto(nombre: String, precio: int)
+            + getNombre(): String
+            + getPrecio(): double
+            {abstract} + calcularImpuesto(): double
+        }
+
+        enum TipoPlato {
+            * ENTRADA
+            * FONDO
+            * POSTRE
+        }
+
+        class Plato {
+            - peso: double
+            - tipoPlato: TipoPlato
+            + Plato(nombre: String, precio: int, peso: double, tipoPlato: TipoPlato)
+            + getPeso(): double
+            + getTipoPlato(): TipoPlato
+        }
+        Plato --> "1" TipoPlato
+        Plato --|> Producto
+
+        enum TipoBebida {
+            * AGUA
+            * JUGO
+            * CERVERZA
+            * VINO
+        }
+
+        class Bebida {
+            - tamanio: int
+            - tipoBebida: TipoBebida
+            + Bebida(nombre: String, precio: int, tamanio: int, tipoBebida: TipoBebida)
+            + getTamanio(): int
+            + getTipoBebida(): TipoBebida
+        }
+        Bebida --> "1" TipoBebida
+        Bebida --|> Producto
+
+        interface Facturable {
+            + agregar(producto: Producto): void
+            + calcularTotal(): double
+        }
+
+        class Pedido {
+            - mesa: int
+            - productos: List<Producto>
+            + Pedido(mesa: int)
+            + getMesa(): int
+            + getCantidadProductos(): int
+        }
+        Pedido ..|> Facturable: <<implements>>
+        Pedido o--> "*" Producto
+    }
+
+    package services {
+
+        interface Sistema {
+            + totalPagar(mesa: int): int
+            + agregarProductoAMesa(producto: Producto, mesa: int): void
+        }
+
+        class SistemaImpl {
+            - pedidos: List<Pedido>
+            + Sistema()
+        }
+        SistemaImpl ..|> Sistema: <<implements>>
+        SistemaImpl o--> "*" Pedido
+
+    }
+}
+
+@enduml
